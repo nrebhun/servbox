@@ -2,9 +2,10 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const GitHubStrategy = require('passport-github2').Strategy;
 const mongoose = require('mongoose');
-const keys = require('../config/keys');
+const keys = process.env.PROD ? reqire('../config/prodKeys') : require('../config/devKeys');
 
 const User = mongoose.model('users');
+
 passport.serializeUser((user, done) => {
     done(null, user.id);
 });
@@ -52,7 +53,7 @@ passport.use(
                     done(null, existingUser);
                 } else {
                     // User with matching profile ID d.n.e. in DB
-                    new User({ githubId: profile.Id })
+                    new User({ githubId: profile.id })
                         .save()
                         .then(user => done(null, user));
                 }
