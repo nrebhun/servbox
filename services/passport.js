@@ -48,8 +48,10 @@ passport.use(
         (accessToken, refreshToken, profile, done) => {
             User.findOne({ githubId: profile.id }).then(existingUser => {
                 if (existingUser) {
-                    return done(err, user);
+                    // We already have a record with the given profile ID
+                    done(null, existingUser);
                 } else {
+                    // User with matching profile ID d.n.e. in DB
                     new User({ githubId: profile.Id })
                         .save()
                         .then(user => done(null, user));
