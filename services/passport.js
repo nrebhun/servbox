@@ -1,5 +1,6 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
+const GitHubStrategy = require('passport-github2').Strategy;
 const mongoose = require('mongoose');
 const keys = require('../config/keys');
 
@@ -29,6 +30,27 @@ passport.use(
                 } else {
                     // User with matching profile ID d.n.e. in DB
                     new User({ googleId: profile.id })
+                        .save()
+                        .then(user => done(null, user));
+                }
+            });
+        }
+    )
+);
+
+passport.use(
+    new GitHubStrategy(
+        {
+            clientID: keys.githubClientID,
+            clientSecret: keys.githubClientSecret,
+            callbackURL: '/auth/github/callback'
+        },
+        (accessToken, refreshToken, profile, done) => {
+            User.findOne({ githubId: profile.id }).then(existingUser => {
+                if (existingUser) {
+                    return done(err, user);
+                } else {
+                    new User({ githubId: profile.Id })
                         .save()
                         .then(user => done(null, user));
                 }

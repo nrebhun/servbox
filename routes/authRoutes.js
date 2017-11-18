@@ -13,4 +13,13 @@ module.exports = app => {
     app.get('/api/current_user', (req, res) => {
         res.send(req.user);
     });
+
+    app.get(
+        '/auth/github',
+        passport.authenticate('github', {
+            scope: ['user:email']
+        })
+    );
+
+    app.get('/auth/github/callback', passport.authenticate('github'));
 };
