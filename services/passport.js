@@ -2,7 +2,7 @@ const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const GitHubStrategy = require('passport-github2').Strategy;
 const mongoose = require('mongoose');
-const keys = process.env.PROD ? reqire('../config/prodKeys') : require('../config/devKeys');
+const keys = require('./config/keys');
 
 const User = mongoose.model('users');
 
