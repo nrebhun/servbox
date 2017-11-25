@@ -24,18 +24,17 @@ passport.use(
             callbackURL: '/auth/google/callback',
             proxy: true
         },
-        (accessToken, refreshToken, profile, done) => {
-            User.findOne({ googleId: profile.id }).then(existingUser => {
-                if (existingUser) {
-                    // We already have a record with the given profile ID
-                    done(null, existingUser);
-                } else {
-                    // User with matching profile ID d.n.e. in DB
-                    new User({ googleId: profile.id })
-                        .save()
-                        .then(user => done(null, user));
-                }
-            });
+        async (accessToken, refreshToken, profile, done) => {
+            const existingUser = await User.findOne({ googleId: profile.id });
+
+            if (existingUser) {
+                // We already have a record with the given profile ID
+                done(null, existingUser);
+            } else {
+                // User with matching profile ID d.n.e. in DB
+                const user = await new User({ googleId: profile.id }).save();
+                done(null, user);
+            }
         }
     )
 );
@@ -48,18 +47,16 @@ passport.use(
             callbackURL: '/auth/github/callback',
             proxy: true
         },
-        (accessToken, refreshToken, profile, done) => {
-            User.findOne({ githubId: profile.id }).then(existingUser => {
-                if (existingUser) {
-                    // We already have a record with the given profile ID
-                    done(null, existingUser);
-                } else {
-                    // User with matching profile ID d.n.e. in DB
-                    new User({ githubId: profile.id })
-                        .save()
-                        .then(user => done(null, user));
-                }
-            });
+        async (accessToken, refreshToken, profile, done) => {
+            const existingUser = await User.findOne({ githubId: profile.id });
+            if (existingUser) {
+                // We already have a record with the given profile ID
+                done(null, existingUser);
+            } else {
+                // User with matching profile ID d.n.e. in DB
+                const user = await User({ githubId: profile.id }).save();
+                done(null, user);
+            }
         }
     )
 );
